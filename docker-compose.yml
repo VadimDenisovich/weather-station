@@ -64,7 +64,7 @@ services:
       REDASH_SECRET_KEY: super_secret_key_12345
       REDASH_WEB_WORKERS: 2
     ports:
-      - "5000:5000"
+      - "5001:5000"
     networks:
       - analytics_net
     restart: unless-stopped
