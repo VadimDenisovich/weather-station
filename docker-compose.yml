@@ -1,0 +1,135 @@
+version: '3.8'
+
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:15-alpine
+    container_name: weather_postgres
+    environment:
+      POSTGRES_USER: weather_user
+      POSTGRES_PASSWORD: weather_pass
+      POSTGRES_DB: weather_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - analytics_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U weather_user -d weather_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Генератор данных погодной станции
+  data_generator:
+    build: ./generator
+    container_name: weather_generator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: weather_db
+      DB_USER: weather_user
+      DB_PASSWORD: weather_pass
+      GENERATION_INTERVAL: 1
+    networks:
+      - analytics_net
+    restart: unless-stopped
+
+  # Redis для Redash
+  redis:
+    image: redis:7-alpine
+    container_name: weather_redis
+    networks:
+      - analytics_net
+    restart: unless-stopped
+
+  # Redash Server
+  redash:
+    image: redash/redash:10.1.0.b50633
+    container_name: weather_redash
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      PYTHONUNBUFFERED: 0
+      REDASH_LOG_LEVEL: INFO
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/weather_db
+      REDASH_COOKIE_SECRET: super_secret_cookie_key_12345
+      REDASH_SECRET_KEY: super_secret_key_12345
+      REDASH_WEB_WORKERS: 2
+    ports:
+      - "5000:5000"
+    networks:
+      - analytics_net
+    restart: unless-stopped
+    command: server
+
+  # Redash Scheduler
+  redash_scheduler:
+    image: redash/redash:10.1.0.b50633
+    container_name: weather_redash_scheduler
+    depends_on:
+      - redash
+    environment:
+      PYTHONUNBUFFERED: 0
+      REDASH_LOG_LEVEL: INFO
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/weather_db
+      REDASH_COOKIE_SECRET: super_secret_cookie_key_12345
+      REDASH_SECRET_KEY: super_secret_key_12345
+      QUEUES: "celery"
+      WORKERS_COUNT: 1
+    networks:
+      - analytics_net
+    restart: unless-stopped
+    command: scheduler
+
+  # Redash Worker
+  redash_worker:
+    image: redash/redash:10.1.0.b50633
+    container_name: weather_redash_worker
+    depends_on:
+      - redash
+    environment:
+      PYTHONUNBUFFERED: 0
+      REDASH_LOG_LEVEL: INFO
+      REDASH_REDIS_URL: redis://redis:6379/0
+      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/weather_db
+      REDASH_COOKIE_SECRET: super_secret_cookie_key_12345
+      REDASH_SECRET_KEY: super_secret_key_12345
+      QUEUES: "queries,scheduled_queries,schemas"
+      WORKERS_COUNT: 1
+    networks:
+      - analytics_net
+    restart: unless-stopped
+    command: worker
+
+  # Jupyter Notebook для анализа данных
+  jupyter:
+    image: jupyter/scipy-notebook:latest
+    container_name: weather_jupyter
+    depends_on:
+      - postgres
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    ports:
+      - "8888:8888"
+    networks:
+      - analytics_net
+    restart: unless-stopped
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+
+volumes:
+  postgres_data:
+
+networks:
+  analytics_net:
+    driver: bridge
