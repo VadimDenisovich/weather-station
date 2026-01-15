@@ -59,7 +59,7 @@ services:
       PYTHONUNBUFFERED: 0
       REDASH_LOG_LEVEL: INFO
       REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgresql://redash_user:redash_pass@postgres/redash_db
+      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/redash_db
       REDASH_COOKIE_SECRET: super_secret_cookie_key_12345
       REDASH_SECRET_KEY: super_secret_key_12345
       REDASH_WEB_WORKERS: 2
@@ -80,7 +80,7 @@ services:
       PYTHONUNBUFFERED: 0
       REDASH_LOG_LEVEL: INFO
       REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/weather_db
+      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/redash_db
       REDASH_COOKIE_SECRET: super_secret_cookie_key_12345
       REDASH_SECRET_KEY: super_secret_key_12345
       QUEUES: "celery"
@@ -100,7 +100,7 @@ services:
       PYTHONUNBUFFERED: 0
       REDASH_LOG_LEVEL: INFO
       REDASH_REDIS_URL: redis://redis:6379/0
-      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/weather_db
+      REDASH_DATABASE_URL: postgresql://weather_user:weather_pass@postgres/redash_db
       REDASH_COOKIE_SECRET: super_secret_cookie_key_12345
       REDASH_SECRET_KEY: super_secret_key_12345
       QUEUES: "queries,scheduled_queries,schemas"

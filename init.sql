@@ -1,5 +1,8 @@
 -- Инициализация базы данных для погодной станции
 
+-- Создание отдельной базы для Redash (метаданные)
+CREATE DATABASE redash_db;
+
 -- Таблица для хранения показаний погодной станции
 CREATE TABLE IF NOT EXISTS weather_data (
     id SERIAL PRIMARY KEY,

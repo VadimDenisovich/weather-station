@@ -68,12 +68,12 @@ docker-compose exec redash python /app/manage.py database create_tables
    - Перейдите в **Settings** → **Data Sources** → **New Data Source**
    - Выберите **PostgreSQL**
    - Заполните параметры:
-    - **Name**: Weather Station DB (for queries)
-    - **Host**: postgres
-    - **Port**: 5432
-    - **User**: redash_user
-    - **Password**: redash_pass
-    - **Database Name**: redash_db
+     - **Name**: Weather Station DB
+     - **Host**: postgres
+     - **Port**: 5432
+     - **User**: weather_user
+     - **Password**: weather_pass
+     - **Database Name**: weather_db
 
 ### Примеры запросов для визуализаций
 
