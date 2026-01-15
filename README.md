@@ -175,24 +175,14 @@ weather-station/
 
 ### Redash Dashboard
 
-*Добавьте скриншоты после настройки дашборда*
+Ниже — скриншоты с готового дашборда и визуализаций.
 
-<!-- ![Dashboard Overview](screenshots/dashboard.png) -->
-<!-- ![Temperature Chart](screenshots/temperature.png) -->
-<!-- ![Weather Distribution](screenshots/weather_pie.png) -->
+![Dashboard Overview](screenshots/dashboard.png)
+![Temperature Chart](screenshots/temperature_over_time.png)
+![Weather Distribution](screenshots/weather_type.png)
+![Recent metrics](screenshots/last_8_mertics.png)
 
-## ✅ Чек-лист выполнения
-
-- [x] Генератор данных с 5+ полями (temperature, humidity, pressure, wind_speed, wind_direction, weather_condition)
-- [x] Данные осмысленные и реалистичные
-- [x] Docker Compose для запуска всей системы
-- [x] PostgreSQL для хранения данных
-- [x] Redash для визуализаций
-- [x] Jupyter Notebook для анализа
-- [x] README.md с инструкцией
-- [ ] Скриншоты Redash дашборда (добавить после настройки)
-- [ ] Git-репозиторий с историей коммитов
 
 ## 👤 Автор
 
-Студент ДВФУ Головко Вадим Денисовичф
+Студент ДВФУ Головко Вадим Денисович
